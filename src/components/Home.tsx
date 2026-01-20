@@ -1,12 +1,14 @@
+import {useState} from 'react';
 import type {MediaItem} from '../types/DBTypes';
 import MediaRow from './MediaRow';
+import SingleView from './SingleView';
  
 const mediaArray: MediaItem[] = [
   {
     media_id: 8,
     user_id: 5,
-    filename: 'https://place-hold.it/1200x800.jpg&text=Pic1&fontsize=120',
-    thumbnail: 'http://place-hold.it/320/240.jpg&text=Thumb2&fontsize=20',
+    filename: 'https://picsum.photos/1200/800?random=1',
+    thumbnail: 'https://picsum.photos/320/240?random=1',
     filesize: 170469,
     media_type: 'image/jpeg',
     title: 'Picture 1',
@@ -17,8 +19,8 @@ const mediaArray: MediaItem[] = [
   {
     media_id: 9,
     user_id: 7,
-    filename: 'https://place-hold.it/800x600.jpg&text=Pic2&fontsize=72',
-    thumbnail: 'http://place-hold.it/320/240.jpg&text=Thumb3&fontsize=20',
+    filename: 'https://picsum.photos/800/600?random=2',
+    thumbnail: 'https://picsum.photos/320/240?random=2',
     filesize: 1002912,
     media_type: 'image/jpeg',
     title: 'Pic 2',
@@ -31,7 +33,7 @@ const mediaArray: MediaItem[] = [
     user_id: 2,
     filename:
       'http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4',
-    thumbnail: 'http://place-hold.it/320/240.jpg&text=Thumb1&fontsize=20',
+    thumbnail: 'https://picsum.photos/320/240?random=3',
     filesize: 1236616,
     media_type: 'video/mp4',
     title: 'Bunny',
@@ -42,9 +44,14 @@ const mediaArray: MediaItem[] = [
 ];
 
 const Home = () => {
+  const [selectedItem, setSelectedItem] = useState<MediaItem | undefined>();
+
   return (
     <>
       <h2>My Media</h2>
+      {selectedItem && (
+        <SingleView item={selectedItem} setSelectedItem={setSelectedItem} />
+      )}
       <table>
         <thead>
           <tr>
@@ -54,11 +61,16 @@ const Home = () => {
             <th>Created</th>
             <th>Size</th>
             <th>Type</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {mediaArray.map((item) => (
-            <MediaRow key={item.media_id} item={item} />
+            <MediaRow
+              key={item.media_id}
+              item={item}
+              setSelectedItem={setSelectedItem}
+            />
           ))}
         </tbody>
       </table>
