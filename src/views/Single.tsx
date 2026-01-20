@@ -1,31 +1,20 @@
-import {useEffect, useRef} from 'react';
+import {useLocation} from 'react-router';
 import type {MediaItem} from '../types/DBTypes';
 
-const SingleView = (props: {
-  item: MediaItem;
-  setSelectedItem: (item: MediaItem | undefined) => void;
-}) => {
-  const {item, setSelectedItem} = props;
-  const dialogRef = useRef<HTMLDialogElement>(null);
+const Single = () => {
+  const {state} = useLocation();
+  const item: MediaItem = state?.item;
 
-  useEffect(() => {
-    if (dialogRef.current) {
-      dialogRef.current.showModal();
-    }
-  }, []);
-
-  const handleClose = () => {
-    if (dialogRef.current) {
-      dialogRef.current.close();
-    }
-    setSelectedItem(undefined);
-  };
+  if (!item) {
+    return (
+      <div>
+        <p>No media item selected</p>
+      </div>
+    );
+  }
 
   return (
-    <dialog
-      ref={dialogRef}
-      style={{padding: '20px', maxWidth: '90vw', maxHeight: '90vh'}}
-    >
+    <div style={{padding: '20px', maxWidth: '90vw', maxHeight: '90vh'}}>
       <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
         <h2>{item.title}</h2>
         {item.description && <p>{item.description}</p>}
@@ -44,10 +33,9 @@ const SingleView = (props: {
             />
           ) : null}
         </div>
-        <button onClick={handleClose}>Close</button>
       </div>
-    </dialog>
+    </div>
   );
 };
 
-export default SingleView;
+export default Single;
