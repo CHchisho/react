@@ -1,48 +1,19 @@
-import {useEffect, useState} from 'react';
-import type {MediaItem, MediaItemWithOwner, UserWithNoPassword} from '../types/DBTypes';
+import {useState} from 'react';
+import type {MediaItemWithOwner} from '../types/DBTypes';
 import MediaRow from '../components/MediaRow';
-import {fetchData} from '../functions';
+import SingleView from '../components/SingleView';
+import {useMedia} from '../hooks/apiHooks';
 
 const Home = () => {
-  const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([]);
+  const [selectedItem, setSelectedItem] = useState<MediaItemWithOwner | null>(
+    null,
+  );
 
-  useEffect(() => {
-    let ignore = false;
-
-    const getMedia = async () => {
-      try {
-        const mediaItems = await fetchData<MediaItem[]>(
-          import.meta.env.VITE_MEDIA_API + '/media',
-        );
-
-        const mediaWithOwner = await Promise.all<MediaItemWithOwner>(
-          mediaItems.map(async (item) => {
-            const user = await fetchData<UserWithNoPassword>(
-              import.meta.env.VITE_AUTH_API + '/users/' + item.user_id,
-            );
-            return {...item, username: user.username};
-          }),
-        );
-
-        if (!ignore) {
-          setMediaArray(mediaWithOwner);
-        }
-      } catch (error) {
-        console.error('Error fetching media:', error);
-      }
-    };
-
-    getMedia();
-
-    return () => {
-      ignore = true;
-    };
-  }, []);
-
-  console.log(mediaArray);
+  const {mediaArray} = useMedia();
 
   return (
     <>
+      <SingleView item={selectedItem} setSelectedItem={setSelectedItem} />
       <h2>My Media</h2>
       <table>
         <thead>
@@ -59,7 +30,11 @@ const Home = () => {
         </thead>
         <tbody>
           {mediaArray.map((item) => (
-            <MediaRow key={item.media_id} item={item} />
+            <MediaRow
+              key={item.media_id}
+              item={item}
+              setSelectedItem={setSelectedItem}
+            />
           ))}
         </tbody>
       </table>

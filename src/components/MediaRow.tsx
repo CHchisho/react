@@ -1,8 +1,11 @@
-import {Link} from 'react-router';
 import type {MediaItemWithOwner} from '../types/DBTypes';
 
-const MediaRow = (props: {item: MediaItemWithOwner}) => {
-  const {item} = props;
+type MediaRowProps = {
+  item: MediaItemWithOwner;
+  setSelectedItem: (item: MediaItemWithOwner | null) => void;
+};
+
+const MediaRow = ({item, setSelectedItem}: MediaRowProps) => {
   return (
     <tr>
       <td>
@@ -15,9 +18,9 @@ const MediaRow = (props: {item: MediaItemWithOwner}) => {
       <td>{item.media_type}</td>
       <td>{item.username}</td>
       <td>
-        <Link to="/single" state={{item}} className="link-button">
+        <button className="link-button" onClick={() => setSelectedItem(item)}>
           View
-        </Link>
+        </button>
       </td>
     </tr>
   );
