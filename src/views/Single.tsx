@@ -1,38 +1,35 @@
-import {useLocation} from 'react-router';
-import type {MediaItem} from '../types/DBTypes';
+import {useLocation, Link} from 'react-router';
+import type {MediaItemWithOwner} from '../types/DBTypes';
 
 const Single = () => {
   const {state} = useLocation();
-  const item: MediaItem = state?.item;
+  const item: MediaItemWithOwner = state?.item;
 
   if (!item) {
     return (
-      <div>
+      <div className="single-view">
         <p>No media item selected</p>
+        <Link to="/" className="link-button">
+          Back to Home
+        </Link>
       </div>
     );
   }
 
   return (
-    <div style={{padding: '20px', maxWidth: '90vw', maxHeight: '90vh'}}>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-        <h2>{item.title}</h2>
-        {item.description && <p>{item.description}</p>}
-        <div style={{maxWidth: '100%', maxHeight: '70vh', overflow: 'auto'}}>
-          {item.media_type.startsWith('image/') ? (
-            <img
-              src={item.filename}
-              alt={item.title}
-              style={{maxWidth: '100%', height: 'auto'}}
-            />
-          ) : item.media_type.startsWith('video/') ? (
-            <video
-              src={item.filename}
-              controls
-              style={{maxWidth: '100%', height: 'auto'}}
-            />
-          ) : null}
-        </div>
+    <div className="single-view">
+      <Link to="/" className="link-button" style={{marginBottom: '1rem', display: 'inline-block'}}>
+        ← Back
+      </Link>
+      <h2>{item.title}</h2>
+      <p className="owner">By: {item.username}</p>
+      {item.description && <p className="description">{item.description}</p>}
+      <div style={{marginTop: '1.5rem'}}>
+        {item.media_type.startsWith('image/') ? (
+          <img src={item.filename} alt={item.title} />
+        ) : item.media_type.startsWith('video/') ? (
+          <video src={item.filename} controls />
+        ) : null}
       </div>
     </div>
   );

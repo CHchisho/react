@@ -1,7 +1,7 @@
 import {Link} from 'react-router';
-import type {MediaItem} from '../types/DBTypes';
+import type {MediaItemWithOwner} from '../types/DBTypes';
 
-const MediaRow = (props: {item: MediaItem}) => {
+const MediaRow = (props: {item: MediaItemWithOwner}) => {
   const {item} = props;
   return (
     <tr>
@@ -13,9 +13,10 @@ const MediaRow = (props: {item: MediaItem}) => {
       <td>{new Date(item.created_at).toLocaleString('fi-FI')}</td>
       <td>{item.filesize}</td>
       <td>{item.media_type}</td>
+      <td>{item.username}</td>
       <td>
-        <Link to="/single" state={{item}}>
-          Show
+        <Link to="/single" state={{item}} className="link-button">
+          View
         </Link>
       </td>
     </tr>
