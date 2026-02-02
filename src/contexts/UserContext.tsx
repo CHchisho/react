@@ -1,7 +1,7 @@
-import React, {createContext, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import type {UserWithNoPassword} from '../types/DBTypes';
 import {useAuthentication, useUser} from '../hooks/apiHooks';
-import {useLocation, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import type {AuthContextType, Credentials} from '../types/LocalTypes';
 
 const UserContext = createContext<AuthContextType | null>(null);
@@ -11,7 +11,32 @@ const UserProvider = ({children}: {children: React.ReactNode}) => {
   const {postLogin} = useAuthentication();
   const {getUserByToken} = useUser();
   const navigate = useNavigate();
-  const location = useLocation();
+
+  // Check user validity by token
+  useEffect(() => {
+    let ignore = false;
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const checkToken = async () => {
+      try {
+        const userResult = await getUserByToken(token);
+        if (!ignore) {
+          setUser(userResult.user);
+        }
+      } catch (e) {
+        if (!ignore) {
+          localStorage.removeItem('token');
+        }
+        console.log((e as Error).message);
+      }
+    };
+    checkToken();
+    return () => {
+      ignore = true;
+    };
+    // eslint-disable-next-line
+  }, []);
 
   const handleLogin = async (credentials: Credentials) => {
     try {
@@ -34,23 +59,8 @@ const UserProvider = ({children}: {children: React.ReactNode}) => {
     }
   };
 
-  const handleAutoLogin = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (token) {
-        const userResult = await getUserByToken(token);
-        setUser(userResult.user);
-        navigate(location.pathname || '/');
-      }
-    } catch (e) {
-      console.log((e as Error).message);
-    }
-  };
-
   return (
-    <UserContext.Provider
-      value={{user, handleLogin, handleLogout, handleAutoLogin}}
-    >
+    <UserContext.Provider value={{user, handleLogin, handleLogout}}>
       {children}
     </UserContext.Provider>
   );

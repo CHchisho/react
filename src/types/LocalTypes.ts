@@ -8,7 +8,6 @@ type AuthContextType = {
   user: UserWithNoPassword | null;
   handleLogin: (credentials: Credentials) => void;
   handleLogout: () => void;
-  handleAutoLogin: () => void;
 };
 
 export type { AuthContextType, Credentials, RegisterCredentials };
