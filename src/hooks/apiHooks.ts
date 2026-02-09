@@ -6,6 +6,7 @@ import type {
   MessageResponse,
   UploadResponse,
   MediaResponse,
+  AvailableResponse,
 } from '../types/MessageTypes';
 import type { Credentials, RegisterCredentials } from '../types/LocalTypes';
 import { fetchData } from '../functions';
@@ -134,6 +135,32 @@ const useUser = () => {
     return userResult;
   };
 
+  const getUsernameAvailable = async (
+    username: string,
+  ): Promise<{ available: boolean; message?: string }> => {
+    try {
+      const result = await fetchData<AvailableResponse>(
+        import.meta.env.VITE_AUTH_API + '/users/username/' + encodeURIComponent(username),
+      );
+      return { available: result.available ?? false };
+    } catch (e) {
+      return { available: false, message: (e as Error).message };
+    }
+  };
+
+  const getEmailAvailable = async (
+    email: string,
+  ): Promise<{ available: boolean; message?: string }> => {
+    try {
+      const result = await fetchData<AvailableResponse>(
+        import.meta.env.VITE_AUTH_API + '/users/email/' + encodeURIComponent(email),
+      );
+      return { available: result.available ?? false };
+    } catch (e) {
+      return { available: false, message: (e as Error).message };
+    }
+  };
+
   const postRegister = async (credentials: RegisterCredentials): Promise<MessageResponse> => {
     const fetchOptions: RequestInit = {
       method: 'POST',
@@ -149,7 +176,7 @@ const useUser = () => {
     return registerResult;
   };
 
-  return { getUserByToken, postRegister };
+  return { getUserByToken, getUsernameAvailable, getEmailAvailable, postRegister };
 };
 
 export { useMedia, useFile, useAuthentication, useUser };

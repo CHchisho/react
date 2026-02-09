@@ -27,20 +27,35 @@ const Profile = () => {
   if (!user) {
     return (
       <>
-        <h2>Profile</h2>
-        <p>Please login to view your profile.</p>
+        <h2 className="text-[1.8em] mb-4 pb-2 border-b-2 border-accent inline-block">
+          Profile
+        </h2>
+        <p className="text-text-muted">Please login to view your profile.</p>
       </>
     );
   }
 
   return (
     <>
-      <h2>Profile</h2>
-      <div className="profile-info">
-        <p><strong>Username:</strong> {user.username}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>User Level:</strong> {user.level_name}</p>
-        <p><strong>Created:</strong> {new Date(user.created_at).toLocaleString('fi-FI')}</p>
+      <h2 className="text-[1.8em] mb-4 pb-2 border-b-2 border-accent inline-block">
+        Profile
+      </h2>
+      <div className="bg-bg-secondary p-8 rounded-lg max-w-[500px] shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+        <p className="my-3 text-text-muted">
+          <strong className="text-accent mr-2">Username:</strong>{' '}
+          {user.username}
+        </p>
+        <p className="my-3 text-text-muted">
+          <strong className="text-accent mr-2">Email:</strong> {user.email}
+        </p>
+        <p className="my-3 text-text-muted">
+          <strong className="text-accent mr-2">User Level:</strong>{' '}
+          {user.level_name}
+        </p>
+        <p className="my-3 text-text-muted">
+          <strong className="text-accent mr-2">Created:</strong>{' '}
+          {new Date(user.created_at).toLocaleString('fi-FI')}
+        </p>
       </div>
     </>
   );

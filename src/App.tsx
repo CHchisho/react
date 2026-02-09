@@ -1,4 +1,3 @@
-import './App.css';
 import {Route, BrowserRouter as Router, Routes} from 'react-router';
 import {UserProvider} from './contexts/UserContext';
 import Layout from './components/Layout';
