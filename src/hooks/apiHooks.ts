@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import type { MediaItem, MediaItemWithOwner, UserWithNoPassword } from '../types/DBTypes';
+import type {
+  MediaItem,
+  MediaItemWithOwner,
+  UserWithNoPassword,
+  Like,
+} from '../types/DBTypes';
 import type {
   LoginResponse,
   UserResponse,
@@ -179,4 +184,57 @@ const useUser = () => {
   return { getUserByToken, getUsernameAvailable, getEmailAvailable, postRegister };
 };
 
-export { useMedia, useFile, useAuthentication, useUser };
+const useLike = () => {
+  const postLike = async (media_id: number, token: string) => {
+    await fetchData<{message: string; like_id?: number}>(
+      import.meta.env.VITE_MEDIA_API + '/likes',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+        body: JSON.stringify({ media_id }),
+      },
+    );
+  };
+
+  const deleteLike = async (like_id: number, token: string) => {
+    await fetchData<{message: string}>(
+      import.meta.env.VITE_MEDIA_API + '/likes/' + like_id,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      },
+    );
+  };
+
+  const getCountByMediaId = async (media_id: number) => {
+    const result = await fetchData<{count: number}>(
+      import.meta.env.VITE_MEDIA_API + '/likes/count/' + media_id,
+    );
+    return result.count;
+  };
+
+  const getUserLike = async (media_id: number, token: string): Promise<Like | null> => {
+    try {
+      const like = await fetchData<Like>(
+        import.meta.env.VITE_MEDIA_API + '/likes/bymedia/user/' + media_id,
+        {
+          headers: {
+            Authorization: 'Bearer ' + token,
+          },
+        },
+      );
+      return like;
+    } catch {
+      return null;
+    }
+  };
+
+  return { postLike, deleteLike, getCountByMediaId, getUserLike };
+};
+
+export { useMedia, useFile, useAuthentication, useUser, useLike };

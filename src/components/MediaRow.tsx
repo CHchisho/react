@@ -1,15 +1,16 @@
+import {useNavigate} from 'react-router';
 import type {MediaItemWithOwner} from '../types/DBTypes';
 import {useUserContext} from '../hooks/ContextHooks';
 
 type MediaRowProps = {
   item: MediaItemWithOwner;
-  setSelectedItem: (item: MediaItemWithOwner | null) => void;
 };
 
 const buttonClasses =
   'inline-block py-2 px-4 bg-transparent border border-accent rounded text-accent font-medium transition-colors duration-200 hover:bg-accent hover:text-text-primary';
 
-const MediaRow = ({item, setSelectedItem}: MediaRowProps) => {
+const MediaRow = ({item}: MediaRowProps) => {
+  const navigate = useNavigate();
   const {user} = useUserContext();
   const canModifyOrDelete =
     user && (user.username === item.username || user.level_name === 'Admin');
@@ -46,7 +47,7 @@ const MediaRow = ({item, setSelectedItem}: MediaRowProps) => {
           <button
             type="button"
             className={buttonClasses}
-            onClick={() => setSelectedItem(item)}
+            onClick={() => navigate('/single', {state: {item}})}
           >
             View
           </button>

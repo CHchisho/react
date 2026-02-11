@@ -1,5 +1,6 @@
 import {useLocation, Link} from 'react-router';
 import type {MediaItemWithOwner} from '../types/DBTypes';
+import Likes from '../components/Likes';
 
 const Single = () => {
   const {state} = useLocation();
@@ -48,6 +49,7 @@ const Single = () => {
           />
         ) : null}
       </div>
+      <Likes item={item} />
     </div>
   );
 };

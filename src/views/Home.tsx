@@ -1,19 +1,11 @@
-import {useState} from 'react';
-import type {MediaItemWithOwner} from '../types/DBTypes';
 import MediaRow from '../components/MediaRow';
-import SingleView from '../components/SingleView';
 import {useMedia} from '../hooks/apiHooks';
 
 const Home = () => {
-  const [selectedItem, setSelectedItem] = useState<MediaItemWithOwner | null>(
-    null,
-  );
-
   const {mediaArray} = useMedia();
 
   return (
     <>
-      <SingleView item={selectedItem} setSelectedItem={setSelectedItem} />
       <h2 className="text-[1.8em] mb-4 pb-2 border-b-2 border-accent inline-block">
         My Media
       </h2>
@@ -48,11 +40,7 @@ const Home = () => {
         </thead>
         <tbody>
           {mediaArray.map((item) => (
-            <MediaRow
-              key={item.media_id}
-              item={item}
-              setSelectedItem={setSelectedItem}
-            />
+            <MediaRow key={item.media_id} item={item} />
           ))}
         </tbody>
       </table>
