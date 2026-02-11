@@ -4,6 +4,7 @@ import type {
   MediaItemWithOwner,
   UserWithNoPassword,
   Like,
+  Comment,
 } from '../types/DBTypes';
 import type {
   LoginResponse,
@@ -237,4 +238,45 @@ const useLike = () => {
   return { postLike, deleteLike, getCountByMediaId, getUserLike };
 };
 
-export { useMedia, useFile, useAuthentication, useUser, useLike };
+type CommentWithUsername = Partial<Comment & { username: string }>;
+
+const useComment = () => {
+  const postComment = async (
+    comment_text: string,
+    media_id: number,
+    token: string,
+  ) => {
+    await fetchData<{ message: string; comment_id?: number }>(
+      import.meta.env.VITE_MEDIA_API + '/comments',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+        body: JSON.stringify({ comment_text, media_id }),
+      },
+    );
+  };
+
+  const getCommentsByMediaId = async (
+    media_id: number,
+  ): Promise<CommentWithUsername[]> => {
+    const comments = await fetchData<Comment[]>(
+      import.meta.env.VITE_MEDIA_API + '/comments/bymedia/' + media_id,
+    );
+    const commentsWithUsername = await Promise.all<CommentWithUsername>(
+      comments.map(async (comment) => {
+        const user = await fetchData<UserWithNoPassword>(
+          import.meta.env.VITE_AUTH_API + '/users/' + comment.user_id,
+        );
+        return { ...comment, username: user.username };
+      }),
+    );
+    return commentsWithUsername;
+  };
+
+  return { postComment, getCommentsByMediaId };
+};
+
+export { useMedia, useFile, useAuthentication, useUser, useLike, useComment };
